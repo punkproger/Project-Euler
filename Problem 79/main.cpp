@@ -24,7 +24,6 @@ void deleteFromVec(std::vector<int> & vec, int val) {
 int main() {
 	std::ifstream file("p079_keylog.txt");
 	std::vector<std::string> passes;
-	std::vector<std::string> possiblePasscodes;
 	std::string str;
 	std::map<int, bothSidesVec> valueMap;
 	while(std::getline(file, str)) {
@@ -47,12 +46,12 @@ int main() {
 		addIfThereIsnt(valueMap[t].first , s);
 	}
 
-	std::string l_password;
+	std::string password;
 	for(int i = 0; i < valueMap.size(); ++i) {
 		for(const auto & item : valueMap) {
-			bool isInLeft {l_password.find(std::to_string(item.first)) == l_password.npos};
+			bool isInLeft {password.find(std::to_string(item.first)) == password.npos};
 			if(isInLeft && item.second.first.empty()) {
-				l_password += std::to_string(item.first);
+				password += std::to_string(item.first);
 				for(auto & itemToDecrease : valueMap) {
 					deleteFromVec(itemToDecrease.second.first, item.first);
 				}
@@ -60,7 +59,7 @@ int main() {
 		}
 	}
 	
-	std::cout << l_password << std::endl;
+	std::cout << password << std::endl;
 
 	file.close();
 	return 0;
