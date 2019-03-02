@@ -22,74 +22,47 @@ std::vector<unsigned int> get_primes(unsigned int max){
     return primes;
 }
 
-std::map<int, int> getFactorization(long x, const std::vector<unsigned int> & primes) { 
-    std::map<int, int> ret; 
-    size_t idx{0};
-
+int getNumberOfPrimeFactors(unsigned int x, const std::vector<unsigned int> & primes) { 
+    int result{0};
+    int prevResult{0};
+    int idx{0};
     while (x != 1) 
-    { 
-        if(x%primes[idx] == 0) {
-        	++ret[primes[idx]];
-        	x /= primes[idx];
-        } else {
-        	++idx;
+    {
+		if (primes[idx] * primes[idx] > x) {
+            return ++result;
         }
+    	prevResult = result;
+        while(x%primes[idx] == 0) {
+        	result = prevResult + 1;
+        	x /= primes[idx];
+        }
+        ++idx;
     }
 
-    return ret; 
+    return result; 
 }
 
-bool haveSameFactor(const std::map<int, int> & f_map, const std::map<int, int> & s_map) {
-	for(const auto & f_pair : f_map) {
-		if(s_map.find(f_pair.first) != s_map.end()) {
-			if(s_map.at(f_pair.first) == f_pair.second) {
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
 
 int main() {
 	std::vector<unsigned int> primes{get_primes(300000)};
 	bool status{true};
 	size_t idx{650};
-	std::array<std::map<int, int>, 4> lastFour;
+	int consec{0};
 
 	while(true) {
-		bool shouldStop{false};
-		bool shouldContinue{false};
-
-		for(int i = 0; i < lastFour.size(); ++i) {
-			lastFour[i] = getFactorization(idx + i, primes);
-			if(lastFour[i].size() != 4) {
-				shouldContinue = true;
-				break;
-			}
-		}
-		if(shouldContinue) {
-			++idx;
-			continue;
+		if(getNumberOfPrimeFactors(idx, primes) == 4) {
+			++consec;
+		} else {
+			consec = 0;
 		}
 
-		for(int i = 0; i < lastFour.size(); ++i) {
-			for(int j = i + 1; j < lastFour.size(); ++j) {
-				if(haveSameFactor(lastFour[i], lastFour[j])) {
-					shouldStop = true;
-					break;
-				}
-			}
-		}
-
-		if(!shouldStop) {
+		if(consec == 4) {
 			break;
 		}
-
 		++idx;
 	}
 
-	std::cout << idx << std::endl;
+	std::cout << idx - 3<< std::endl;
 
 	return 0;
 }
