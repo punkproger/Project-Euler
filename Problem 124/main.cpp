@@ -4,23 +4,21 @@
 #include <algorithm>
 #include <cstring>
 
-using ull = unsigned long int;
+using ull = unsigned int;
 
 std::vector<ull> get_primes(ull max);
-constexpr ull limit = 1e5, necessaryIndex = 1e4-1;
 
+constexpr ull limit = 1e5, necessaryIndex = 1e4-1;
 
 auto primes = std::move(get_primes(limit+10)); 
 
 
 inline ull rad(ull val) {
-	auto valCopy = val;
 	ull result{1};
 	std::set<ull> uniqueDivisors;
 
 	for(ull i = 0; primes[i] <= val; ++i) {
 		while((val % primes[i]) == 0) {
-			//std::cout << val << "/" << primes[i] << std::endl;
 			uniqueDivisors.insert(primes[i]);
 			val /= primes[i];
 		}
@@ -50,8 +48,7 @@ inline std::vector<ull> get_primes(ull max){
     return primes;
 }
 
-struct Element
-{
+struct Element {
 	int idx;
 	ull val;
 };
