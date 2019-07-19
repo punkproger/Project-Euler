@@ -1,5 +1,5 @@
 # Project-Euler
-My solutions of Problems of Project Euler 
+My solutions of Problems from Project Euler 
 
 All problems you can find in [this link](https://projecteuler.net/archives).
 
