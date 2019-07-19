@@ -83,11 +83,11 @@ int main() {
     auto primes = get_primes(1e6);
     int i = 7037;
 
-    for(i; i < primes.size() && remainder < 1e10; ++i) {
+    for(i; i < primes.size() && remainder < 1e10; i += 2) {
         ull prime = primes[i];
         ull mod   = prime*prime;
         ull exp   = i + 1;
-        remainder = (binary_pow(prime-1, exp, mod) + binary_pow(prime+1, exp, mod)) % mod;
+        remainder = 2 * exp * prime;
         //std::cout << std::endl;
     }
 
