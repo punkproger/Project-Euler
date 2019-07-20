@@ -2,62 +2,25 @@
 
 using ull = unsigned int;
 
-const ull tens[] = {
-	0,
-	1,
-	10,
-	100,
-	1000,
-	10000,
-	100000,
-	1000000,
-	10000000,
-	100000000,
-};
 
-inline ull digitsCount( int x )
-{
-	ull answer = 0 ;
-	while(x)
-	{
-		++answer ;
-		x /= 10 ;
-	}
-	return answer ;
-}
-
-ull getReversed(ull value) {
-	auto digits = digitsCount(value);
-	ull result = 0;
-
-	do {
-		result += (value%10) * tens[digits];
-		value /= 10; 
-	} while(--digits);
-
-	return result;
+inline ull getReversed(ull n) {
+    ull m = 0;
+    while(n>0) {
+        m *= 10;
+        m += (n % 10);
+        n /= 10;
+    }
+    return m;
 }
 
 inline bool isReversible(ull value) {
-	ull digits = digitsCount(value);
-
-	ull copyForRev = value;
-	ull fromLast = 0; 
-	ull newValue = 0; 
-	ull tmp;
+	value += getReversed(value);
 
 	do {
-		tmp = (value%10) + (copyForRev/tens[digits])+fromLast;
-		newValue = tmp%10;
-		fromLast = tmp/10;
-
-		value /= 10;
-		copyForRev %= tens[digits];
-
-		if(!(newValue & 1)) {
+		if(!(value & 1)) {
 			return false;
 		}
-	} while(--digits);
+	} while(value/=10);
 
 	return true;
 }
@@ -65,9 +28,9 @@ inline bool isReversible(ull value) {
 int main() {
 	int result = 0;
 
-	for(ull i = 11; i < 1e9; ++i) {
+	for(ull i = 11; i < 1e9; i += 2) {
 		if(i % 10 != 0 && isReversible(i)) {
-			++result;
+			result += 2;
 		}
 	}
 
