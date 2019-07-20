@@ -1,35 +1,36 @@
 #include <iostream>
 
-using ull = unsigned int;
+using ull = int;
 
 
-inline ull getReversed(ull n) {
-    ull m = 0;
-    while(n>0) {
-        m *= 10;
-        m += (n % 10);
-        n /= 10;
+ull getReversed(ull value) {
+    ull reversed = 0;
+    while(value > 0) {
+        reversed *= 10;
+        reversed += (value % 10);
+        value /= 10;
     }
-    return m;
+    return reversed;
 }
 
-inline bool isReversible(ull value) {
+bool isReversible(ull value) {
 	value += getReversed(value);
 
 	do {
-		if(!(value & 1)) {
+		if(value % 2 == 0) {
 			return false;
 		}
-	} while(value/=10);
+	} while(value /= 10);
 
 	return true;
 }
 
 int main() {
-	int result = 0;
+	ull result = 0, add = 2;
+	constexpr ull limit = 1e8;
 
-	for(ull i = 11; i < 1e9; i += 2) {
-		if(i % 10 != 0 && isReversible(i)) {
+	for(ull i = 11; i < limit; i += 2) {
+		if(isReversible(i)) {
 			result += 2;
 		}
 	}
