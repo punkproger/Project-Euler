@@ -59,30 +59,37 @@ SuDoku solveSuDoku(const SuDoku & puzzle) {
 
 	std::function<bool(SuDoku&)> solve;
 	solve = [&solve](SuDoku & puzzle) -> bool {
-		std::vector<Position> zeroPositions;
-		PossibleValuesMatrix possibleValues;
+		Position position(-1, -1);
+		PossibleValues possibleValues;
+		bool breakpoint = false;
 
 		for(int i = 0; i < digitsPerRow; ++i) {
 			for(int j = 0; j < digitsPerRow; ++j) {
 				if(puzzle[i][j] == 0) {
-					zeroPositions.push_back(Position(i, j));
-					possibleValues[i][j] = getPossibleValues(puzzle, i, j);
+					position = Position(i, j);		
+					goto breakLoopLabel;//Break from 2 loops
 				}
-			}
-
-			for(const auto & position : zeroPositions) {
-				for(auto value : possibleValues[position.x][position.y]) {
-					puzzle[position.x][position.y] = value;
-					if(solve(puzzle)) {
-						return true;
-					}
-				}
-				
-				puzzle[position.x][position.y] = 0;
-				return false;
 			}
 		}
-		return true;
+		breakLoopLabel://Break from 2 loops
+
+		if(position.x == -1) {
+			return true;
+		}
+
+		possibleValues = getPossibleValues(puzzle, position.x, position.y);
+
+		for(auto value : possibleValues) {
+			puzzle[position.x][position.y] = value;
+
+			if(solve(puzzle)) {
+				return true;
+			}
+		}
+		
+		puzzle[position.x][position.y] = 0;
+		return false;
+		
 	};
 
 	solve(changedPuzzle);
@@ -91,12 +98,9 @@ SuDoku solveSuDoku(const SuDoku & puzzle) {
 }
 
 int main() {
-	srand(time(NULL));
-	int solved{0};
-
 	constexpr int puzzlesCount{50};
 	std::array<SuDoku, puzzlesCount> puzzles;
-	int result{0};
+	std::atomic<int> result{0};
 
 	std::ifstream file("p096_sudoku.txt");
 	std::string line;
@@ -125,10 +129,9 @@ int main() {
 	}
 
 	for(const auto & puzzle : puzzles) {
-		threads.push_back(std::thread([&result, &solved, puzzle](){
+		threads.push_back(std::thread([&result, &puzzle]() {
 			auto solvedSudoku = solveSuDoku(puzzle);
 			result += solvedSudoku[0][0] * 100 + solvedSudoku[0][1] * 10 + solvedSudoku[0][2];
-			std::cout << "Solved: " << ++solved << std::endl;
 		}));
 	}
 
