@@ -2,20 +2,37 @@
 #include <functional>
 #include <algorithm>
 #include <vector>
+#include <fstream>
 #include <cmath>
 
-bool isPrime(unsigned int number)
-{
-	unsigned int limit = sqrt(number);
-	for(int i = 2; i <= limit; i++)
+bool isPrime(int n) {
+	if (n < 2)
+	    return false;
+	if (n < 4)
+	    return true;
+	if (n % 2 == 0)
+	    return false;
+	if (n < 9)
+	    return true;
+	if (n % 3 == 0)
+	    return false;
+	if (n < 25)
+	    return true;
+
+	int s = sqrt(n);
+	for (int i = 5; i <= s; i += 6)
 	{
-		if(number % i == 0)
-		{
-			return false ;
-		}
+	    if (n % i == 0)
+	    {
+	        return false;
+	    }
+	    if (n % (i + 2) == 0)
+	    {
+	        return false;
+	    }
 	}
 
-	return true ;
+return true;
 }
 
 std::vector<std::vector<int>> getAllSeq(size_t elements)
@@ -55,35 +72,35 @@ std::vector<std::vector<int>> getAllSeq(size_t elements)
 size_t getPrimeSeqsCount(const std::vector<std::vector<int>>& seqs)
 {
 	size_t result{0};
-	size_t iterations{0};
 
 	std::vector<int> digits{1,2,3,4,5,6,7,8,9};
 
 	do {
 		for(const auto& seq : seqs)
 		{
-			int size = 0;
+			int size{0};
+			int prev_value{0};
 			bool breaked{false};
 
 			for(int digs : seq)
 			{
 				unsigned int value{0};
-				unsigned int tens{1};
 
-				for(int i = (size + digs) - 1; i >= size; --i)
+				for(int i = size; i < size + digs; ++i)
 				{
-					value += tens * digits[i];
-					tens *= 10;
+					value = value * 10 + digits[i];
 				}
 
-				size += digs;
-
-				if(!isPrime(value))
+				if(prev_value > value || !isPrime(value))
 				{
 					breaked = true;
 					break;
 				}
+
+				size += digs;
+				prev_value = value;
 			}
+
 
 			if(!breaked)
 			{
@@ -91,6 +108,7 @@ size_t getPrimeSeqsCount(const std::vector<std::vector<int>>& seqs)
 			}
 		}
 	} while (std::next_permutation(digits.begin(), digits.end()));
+
 
 	return result;
 }
