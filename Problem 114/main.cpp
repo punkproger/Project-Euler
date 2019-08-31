@@ -8,37 +8,18 @@ using ull = unsigned long long;
 
 ull count(ull items)
 {
-	ull result{0};
+	std::vector<ull> r(items), b(items);
+	r[0] = 0; r[1] = 0; r[2] = 1; 
+	b[0] = 1; b[1] = 1; b[2] = 1;
 
-	std::function<void(ull, bool)> impl;
-	impl = [&impl, &result](ull items, bool previousIsGrey)
+	for(size_t i = 3; i < items; ++i)
 	{
-		if (items == 0)
-		{
-			++result;
-			return;
-		}
+		r[i] = r[i-1] + b[i-3];
+		b[i] = r[i-1] + b[i-1];
+	}
+	
 
-		// gray color
-		impl(items-1, true);
-
-		// red color
-		if(previousIsGrey)
-		{
-			if(items >= 3)
-			{
-				impl(items-3, false);
-			}
-		}
-		else
-		{
-			impl(items-1, false);
-		}
-	};
-
-	impl(items, true);
-
-	return result;
+	return r[items-1] + b[items-1];
 }
 
 
