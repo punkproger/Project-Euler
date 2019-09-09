@@ -4,77 +4,63 @@
 #include <map>
 #include <cmath>
 
+#include "num.hpp"
 
-using ull = unsigned long long;
+using ull = Num;
 using ld = long double;
 
-
-std::pair<ull, ull> getInfFract(long double val, size_t iterations)
+std::pair<ull, ull> solve(size_t input)
 {
-	std::vector<ull> a;
+	Num limit = sqrt(input);
+	Num m = 0;
+    Num d = 1;
+    Num val = limit;
 
-	ull p{1}, q{1};
+	ull num1{1}, denum1{0};
+	ull num{val}, denum{1};
 
-	for (size_t i = 0; i < iterations; ++i)
+	const ull D{int(input)};
+	static const ull goal{1};
+
+	if(limit*limit != D)
 	{
-		a.push_back(floor(val));
-		if (a.back() == 0)
+		do
 		{
-			break;
-		}
+			m   = d * val - m;
+	        d   = (D - m * m) / d;
+	        val = (limit + m) / d;
 
-		val = 1.0f/(val - static_cast<ld>(a.back()));
+			ull num2 = num;
+			ull denum2 = denum;
+
+			num = val*num + num1;
+			denum = val*denum + denum1;
+
+			num1 = num2;
+			denum1 = denum2;
+		} while((num*num) - (denum*denum) * D != goal);
 	}
 
-	if (!a.empty())
-	{
-		q = a.back();
-		for(auto it = a.crbegin() + 1; it != a.crend(); ++it)
-		{
-			p += (*it) * q;
-			std::swap(p, q);
-		}
-		std::swap(p, q);
-	}
-
-	return std::pair<ull, ull>(p, q);
-}
-
-std::pair<ull, ull> solve(ull m)
-{
-	ld sqrt_of_m = sqrtl(m);
-	
-	if(sqrt_of_m != floor(sqrt_of_m))
-	{
-		for(int i = 2; i < 1e4; ++i)
-		{
-			auto pair = getInfFract(sqrt_of_m, i);
-			if((pair.first*pair.first) - (pair.second*pair.second) * m == 1)
-			{
-				return pair;
-			}
-		}
-	}
-
-	return std::pair<ull, ull>(0, 0);
+	return std::pair<ull, ull>(num, denum);
 }
 
 
 int main()
 {
 	ull max{0};
+	size_t max_idx{0};
 
-	for(ull i = 3; i <= 1e3; ++i)
+	for(size_t i = 3; i <= 1e3; ++i)
 	{
-		std::cout << i << std::endl;
 		auto pair = solve(i);
 		if(pair.first > max)
 		{
 			max = pair.first;
+			max_idx = i;
 		}
 	}
 
-	std::cout << max << std::endl;
+	std::cout << max_idx << std::endl;
 
 	return 0;
 }
